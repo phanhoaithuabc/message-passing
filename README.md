@@ -64,21 +64,33 @@ users:
 Type `exit` to exit the virtual OS and you will find yourself back in your computer's session. Create the file `~/.kube/config` and paste the contents of the `k3s.yaml` output here.
 
 ### Steps
+0. Refacter code into Microservice
+1. Generating gRPC files: `cd modules\persons-grpc\app && python -m grpc_tools.protoc -I./ --python_out=./ --grpc_python_out=./ person.proto`
+1. Set up CICD (github action workflow in .github/workflows/udaconnect-docker-build.yml)
 1. `kubectl apply -f deployment/db-configmap.yaml` - Set up environment variables for the pods
 2. `kubectl apply -f deployment/db-secret.yaml` - Set up secrets for the pods
 3. `kubectl apply -f deployment/postgres.yaml` - Set up a Postgres database running PostGIS
-4. `kubectl apply -f deployment/udaconnect-api.yaml` - Set up the service and deployment for the API
-5. `kubectl apply -f deployment/udaconnect-app.yaml` - Set up the service and deployment for the web app
-6. `sh scripts/run_db_command.sh <POD_NAME>` - Seed your database against the `postgres` pod
-Subsequent runs of `kubectl apply` for making changes to deployments or services shouldn't require you to seed the database again!
+4. `kubectl apply -f deployment/kafka.yaml` - Set up Kafka (can be done by Helm)
+5. `kubectl apply -f deployment/udaconnect-connections-api.yaml` - Set up the service and deployment for connections-api
+6. `kubectl apply -f deployment/udaconnect-persons-api.yaml` - Set up the service and deployment for persons-api
+7. `kubectl apply -f deployment/udaconnect-locations-api.yaml` - Set up the service and deployment for the locations-api
+8. `kubectl apply -f deployment/udaconnect-locations-kafka.yaml` - Set up the service and deployment for Locations Kafka Consumer
+9. `kubectl apply -f deployment/udaconnect-persons-grpc.yaml` - Set up the service and deployment for Persons gRPC
+10. `kubectl apply -f deployment/udaconnect-app.yaml` - Set up the frontend
+11. `sh scripts/run_db_command.sh <POD_NAME>` - Seed your database against the `postgres` pod
 
 ### Verifying it Works
-Once the project is up and running, you should be able to see 3 deployments and 3 services in Kubernetes:
-`kubectl get pods` and `kubectl get services` - should both return `udaconnect-app`, `udaconnect-api`, and `postgres`
+Once the project is up and running, you should be able to see 7 deployments and 12 services (include kafka) in Kubernetes, check `kubectl get pods` and `kubectl get services`
 
 These pages should also load on your web browser:
-* `http://localhost:30001/` - OpenAPI Documentation
-* `http://localhost:30001/api/` - Base path for API
+* `http://localhost:30001/` - OpenAPI Documentation for connections api
+* `http://localhost:30002/` - OpenAPI Documentation for persons api
+* `http://localhost:30003/` - OpenAPI Documentation for locations api
+
+* `http://localhost:30001/api/` - Base path for API for connections api
+* `http://localhost:30002/api/` - Base path for API for persons api
+* `http://localhost:30003/api/` - Base path for API for locations api
+
 * `http://localhost:30000/` - Frontend ReactJS Application
 
 #### Deployment Note
