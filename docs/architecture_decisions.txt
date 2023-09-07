@@ -1,0 +1,5 @@
+The Starter project code is a monolith application, so I will break it down and refactor it into microservices application:
+ - Refactor monolith into 3 block contain: person, location and connection (using REST to communicate with frontend)
+ - Locations-api is a kafka producer that sends message to kafka (to deal with large amount of location data)
+ - Locations-api block sends message to kafka and consumer (location-kafka) block will write it to DB. Using kafka to reduce the pressure on large location data process and push to DB
+ - Use gRPC microservice(Person gRPC) to communication between internal services (Person api and the Connection api) because the gRPC is faster than REST, improve performance, reduce in overall payload sizes and connection overhead.

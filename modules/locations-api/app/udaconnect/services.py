@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Dict, List
 
-from app import db
+from app import db, g
 from app.udaconnect.models import Location
 from app.udaconnect.schemas import LocationSchema
 from geoalchemy2.functions import ST_AsText, ST_Point
@@ -10,9 +10,6 @@ from sqlalchemy.sql import text
 from kafka import KafkaProducer
 
 TOPIC_NAME = 'locations'
-KAFKA_SERVER = 'kafka-headless:9092'
-
-producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER)
 
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger("udaconnect-locations-api")
@@ -41,11 +38,13 @@ class LocationService:
         new_location.person_id = location["person_id"]
         new_location.creation_time = location["creation_time"]
         new_location.coordinate = ST_Point(location["latitude"], location["longitude"])
-        # WRITE TO DB AND SEND A MESSAGE TO KAFA AS WELL
+        
+        # SENT TO KAFKA
+        producer = g.kafka_producer
         producer.send(TOPIC_NAME, new_location)
         producer.flush()
         
-        db.session.add(new_location)
-        db.session.commit()
+        # db.session.add(new_location)
+        # db.session.commit()
 
         return new_location

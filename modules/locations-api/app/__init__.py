@@ -22,5 +22,11 @@ def create_app(env=None):
     @app.route("/health")
     def health():
         return jsonify("healthy")
+    
+    @app.before_request
+    def before_request():
+        KAFKA_PRODUCER = "kafka-0.kafka-headless.default.svc.cluster.local:9092"
+        producer = KafkaProducer(bootstrap_servers=[KAFKA_PRODUCER])
+        g.kafka_producer = producer
 
     return app

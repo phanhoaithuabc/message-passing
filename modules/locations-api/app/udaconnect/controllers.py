@@ -10,7 +10,7 @@ from typing import Optional, List
 
 DATE_FORMAT = "%Y-%m-%d"
 
-api = Namespace("UdaConnect-locations", description="Locations API")  # noqa
+api = Namespace("UdaConnect-locations", description="Locations API")
 
 @api.route("/locations")
 @api.route("/locations/<location_id>")

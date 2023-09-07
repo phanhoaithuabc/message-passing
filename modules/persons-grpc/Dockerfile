@@ -10,4 +10,4 @@ EXPOSE 5005
 
 COPY . .
 
-CMD ["python", "app/grpcserver.py"]
+CMD ["python", "app/grpc_server.py"]

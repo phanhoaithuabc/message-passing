@@ -65,7 +65,8 @@ Type `exit` to exit the virtual OS and you will find yourself back in your compu
 
 ### Steps
 0. Refacter code into Microservice
-1. Generating gRPC files: `cd modules\persons-grpc\app && python -m grpc_tools.protoc -I./ --python_out=./ --grpc_python_out=./ person.proto`
+1. Generating person gRPC files: `cd modules\connection-api\app\udaconnect && python -m grpc_tools.protoc -I./ --python_out=./ --grpc_python_out=./ person.proto`
+1. Generating person gRPC files: `cd modules\persons-grpc\app && python -m grpc_tools.protoc -I./ --python_out=./ --grpc_python_out=./ person.proto`
 1. Set up CICD (github action workflow in .github/workflows/udaconnect-docker-build.yml)
 1. `kubectl apply -f deployment/db-configmap.yaml` - Set up environment variables for the pods
 2. `kubectl apply -f deployment/db-secret.yaml` - Set up secrets for the pods
